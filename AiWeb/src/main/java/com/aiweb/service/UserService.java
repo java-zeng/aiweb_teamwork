@@ -13,6 +13,8 @@ public interface UserService extends UserDetailsService {
      */
     User register(RegisterRequest registerRequest);
 
+    void loginUpdateTime(String username);
+
     /**
      * 根据用户名设置用户信息
      * @param username

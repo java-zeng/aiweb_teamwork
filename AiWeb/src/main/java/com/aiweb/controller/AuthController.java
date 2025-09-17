@@ -54,6 +54,7 @@ public class AuthController {
             //2.如果认证失败，抛出异常，返回错误信息
             return Result.error("用户名或者密码错误！");
         }
+        userService.loginUpdateTime(loginRequest.getUsername());
         //3.生成准备放入jwt令牌中的信息
         Map<String , Object> claims=new HashMap<>();
         claims.put("username",loginRequest.getUsername());

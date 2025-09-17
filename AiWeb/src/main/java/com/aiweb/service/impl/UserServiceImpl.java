@@ -10,10 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.authentication.AnonymousAuthenticationWebFilter;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+
+import java.time.LocalDateTime;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserMapper userMapper;
@@ -35,8 +39,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user=new User();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));//加密后存入对象
+        user.setEmail(registerRequest.getEmail());
+        user.setNickname(registerRequest.getNickname());
         userMapper.insert(user);
         return user;
+    }
+
+    @Override
+    public void loginUpdateTime(String username) {
+        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("username",username);
+        User user =userMapper.selectOne(queryWrapper);
+        if(user!=null)
+        {
+            user.setLastLogin(LocalDateTime.now());
+            userMapper.updateById(user);
+        }
     }
 
     @Override

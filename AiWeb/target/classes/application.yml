@@ -1,7 +1,6 @@
 #端口号
 server:
   port: 8888
-  servlet: /api
 
 spring:
   # 数据库连接池 (DataSource) 配置
@@ -10,7 +9,7 @@ spring:
     # 数据库用户名 (通常是 root)
     username: root
     # 您的数据库密码 (请替换成您自己的密码)
-    password: Zj173203221853@
+    password: Zj17320321853@
     # MySQL 8+ 的驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -19,3 +18,8 @@ jwt:
   secret: '2qUSpwm/nO1N54p4BWMIO/8vU+hFYObj4490oUcKpMc='
   # 过期时间 (例如 12 小时)
   expiration: 43200000
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
