@@ -1,6 +1,6 @@
 #端口号
 server:
-  port: 8888
+  port: 8890
 
 spring:
   # 数据库连接池 (DataSource) 配置
@@ -22,4 +22,12 @@ jwt:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+
+smsbao:
+  apiurl: http://api.smsbao.com/sms
+  username: aiweb
+  password: Zj123456@
+  contentSign: Aiweb
+
+
 

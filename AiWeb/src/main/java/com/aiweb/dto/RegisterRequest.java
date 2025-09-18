@@ -15,5 +15,7 @@ public class RegisterRequest {
     private String username;
     private String nickname;
     private String password;
+    private String phoneNumber;
+    private String inputCode;//用户输入的验证码
     private String email;
 }

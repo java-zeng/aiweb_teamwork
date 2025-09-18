@@ -4,6 +4,7 @@ import com.aiweb.common.Result;
 import com.aiweb.dto.AuthResponse;
 import com.aiweb.dto.LoginRequest;
 import com.aiweb.dto.RegisterRequest;
+import com.aiweb.service.VerificationService;
 import com.aiweb.utils.JwtUtil;
 import com.aiweb.entity.User;
 import com.aiweb.service.UserService;
@@ -32,14 +33,26 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private VerificationService verificationService;
+
+    @PostMapping("/sendCode")
+    public Result sendCode(@RequestBody RegisterRequest request)
+    {
+        String phoneNumber=request.getPhoneNumber();
+        try{
+            verificationService.sendVerification(phoneNumber);
+            return Result.success("短信发送成功，请注意查收！");
+        }catch (Exception e)
+        {
+            return Result.error("短信发送失败，"+e+"，请重试！");
+        }
+    }
+
     @PostMapping("/register")
     public Result register(@RequestBody RegisterRequest registerRequest){
-        try{
-            userService.register(registerRequest);
-            return Result.success("注册成功！");
-        }catch(RuntimeException e){
-            return Result.error(e.getMessage());
-        }
+        User user=userService.register(registerRequest);
+        return Result.success(user);
     }
 
     @PostMapping("/login")
@@ -56,7 +69,7 @@ public class AuthController {
         }
         userService.loginUpdateTime(loginRequest.getUsername());
         //3.生成准备放入jwt令牌中的信息
-        Map<String , Object> claims=new HashMap<>();
+        Map<String,Object> claims=new HashMap<>();
         claims.put("username",loginRequest.getUsername());
         //4.生成jwt令牌,生成一个包含用户名的 JWT
         final String jwt=jwtUtil.generateJwt(claims);

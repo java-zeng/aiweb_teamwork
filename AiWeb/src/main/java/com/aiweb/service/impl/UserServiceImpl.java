@@ -1,20 +1,31 @@
 package com.aiweb.service.impl;
 
+import com.aiweb.common.Result;
+import com.aiweb.config.AppConfig;
 import com.aiweb.dto.RegisterRequest;
+import com.aiweb.dto.VerificationDto;
 import com.aiweb.entity.User;
+import com.aiweb.entity.Verification;
 import com.aiweb.mapper.UserMapper;
+import com.aiweb.mapper.VerificationMapper;
 import com.aiweb.service.UserService;
+import com.aiweb.service.VerificationService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.authentication.AnonymousAuthenticationWebFilter;
 import org.springframework.stereotype.Service;
+
+import java.nio.file.LinkOption;
 import java.time.LocalDateTime;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -25,9 +36,16 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private VerificationMapper verificationMapper;
+
+    @Autowired
+    private VerificationService verificationService;
+
+
     /**
      * 注册的逻辑：用户名存在：报错；不存在：用户名存入User，密码加密后存入
-     * @param registerRequest
+     * @param
      */
     @Override
     public User register(RegisterRequest registerRequest) {
@@ -35,6 +53,13 @@ public class UserServiceImpl implements UserService{
         queryWrapper.eq("username", registerRequest.getUsername());
         if (userMapper.selectOne(queryWrapper) != null) {
             throw new RuntimeException("用户名已存在");
+        }
+        String phoneNumber =registerRequest.getPhoneNumber();
+        String inputCode=registerRequest.getInputCode();
+        boolean isCodeVaild=verificationService.checkCode(phoneNumber,inputCode);
+        if(!isCodeVaild)
+        {
+            throw new RuntimeException("短信验证码输入错误！");
         }
         User user=new User();
         user.setUsername(registerRequest.getUsername());
