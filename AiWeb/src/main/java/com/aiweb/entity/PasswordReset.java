@@ -1,27 +1,24 @@
 package com.aiweb.entity;
 
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("verifications")
-public class Verification {
-
+public class PasswordReset {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    private Long userId;
     private String userEmail;
-    private String verificationCode;
-    private LocalDateTime createTime;
     private LocalDateTime expireTime;
-    private Boolean result;
+    private String resetByToken;
+    private Boolean isUsed;
 }

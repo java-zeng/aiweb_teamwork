@@ -15,9 +15,9 @@ public interface UserService extends UserDetailsService {
 
     void loginUpdateTime(String username);
 
-    /**
-     * 根据用户名设置用户信息
-     * @param username
-     * @return
-     */
+    public void forgertPassword(String userEmail);
+
+    public void resetPassword(String token,String userEmail,String newPassword);
+
+    public void checkUsernameAndSendCode(String username,String userEmail) throws Exception;
 }

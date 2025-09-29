@@ -1,21 +1,18 @@
 package com.aiweb.controller;
 
 import com.aiweb.common.Result;
-import com.aiweb.dto.AuthResponse;
-import com.aiweb.dto.LoginRequest;
-import com.aiweb.dto.RegisterRequest;
+import com.aiweb.dto.*;
+import com.aiweb.service.EmailService;
 import com.aiweb.service.VerificationService;
 import com.aiweb.utils.JwtUtil;
 import com.aiweb.entity.User;
 import com.aiweb.service.UserService;
+import org.bouncycastle.tsp.ers.ERSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,16 +33,19 @@ public class AuthController {
     @Autowired
     private VerificationService verificationService;
 
+    @Autowired
+    private EmailService emailService;
+
+
     @PostMapping("/sendCode")
     public Result sendCode(@RequestBody RegisterRequest request)
     {
-        String phoneNumber=request.getPhoneNumber();
-        try{
-            verificationService.sendVerification(phoneNumber);
-            return Result.success("短信发送成功，请注意查收！");
+        try {
+            userService.checkUsernameAndSendCode(request.getUsername(),request.getEmail());
+            return Result.success("发送验证码成功!");
         }catch (Exception e)
         {
-            return Result.error("短信发送失败，"+e+"，请重试！");
+            return Result.error("用户名重复或发送邮件失败！,原因如下:"+e.getMessage());
         }
     }
 
@@ -77,4 +77,29 @@ public class AuthController {
         return Result.success(new AuthResponse(jwt));
     }
 
+    @PostMapping("/forgot_password")
+    public Result forgetPassword(@RequestBody ForgotPasswordRequest passwordRequest)
+    {
+        String email =passwordRequest.getUserEmail();
+        try{
+            userService.forgertPassword(email);
+            return Result.success("重置链接已经发送到你的邮箱");
+        }catch (Exception e)
+        {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset_password")
+    public Result resetPassword(@RequestBody ResetPasswordRequest request)
+    {
+        try{
+            userService.resetPassword(request.getToken(),request.getUserEmail(),request.getNewPassword());
+            return Result.success("重置密码成功，请重新登陆！");
+        }catch (Exception e)
+        {
+            return Result.error(e.getMessage());
+        }
+    }
 }
+

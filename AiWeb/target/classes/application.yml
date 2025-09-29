@@ -12,6 +12,23 @@ spring:
     password: Zj17320321853@
     # MySQL 8+ 的驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.163.com
+    username: 17320321853@163.com
+    password: RCVpU3jSsBSTsgzR
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.socketFactory.port: 465
+      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtp.socketFactory.fallback: false
+
+#短信模版部分信息
+sendEmail:
+  title: "Aiweb网站开发注册"
 
 jwt:
   # 密钥
@@ -19,15 +36,19 @@ jwt:
   # 过期时间 (例如 12 小时)
   expiration: 43200000
 
+# mybatis驼峰命名
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 
+#TODO 准备用于短信宝手机短信验证的（）
 smsbao:
-  apiurl: http://api.smsbao.com/sms
-  username: aiweb
-  password: Zj123456@
-  contentSign: Aiweb
+  apiurl: "http://api.smsbao.com/sms"
+  username: "aiweb"
+  password: "Zj123456@"
+  content: "验证码有效期为5分钟，验证码为:"
+
+
 
 
 

@@ -24,6 +24,7 @@ public class User {
     private String username;
     private String email; // 新增：对应 email 字段
     private String password;
+    private String phoneNumber;
 
     // 3. 用户公开资料
     private String nickname; // 新增：对应 nickname 字段
