@@ -2,21 +2,21 @@ package com.aiweb.controller;
 
 import com.aiweb.common.Result;
 import com.aiweb.dto.*;
+import com.aiweb.dto.request.ForgotPasswordRequest;
+import com.aiweb.dto.request.RegisterRequest;
+import com.aiweb.dto.request.ResetPasswordRequest;
 import com.aiweb.service.EmailService;
 import com.aiweb.service.VerificationService;
 import com.aiweb.utils.JwtUtil;
 import com.aiweb.entity.User;
 import com.aiweb.service.UserService;
-import org.bouncycastle.tsp.ers.ERSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -75,6 +75,22 @@ public class AuthController {
         final String jwt=jwtUtil.generateJwt(claims);
         //5.把生成的jwt令牌返回给前端
         return Result.success(new AuthResponse(jwt));
+    }
+
+    /**
+     * 注销并删除该用户及其在 FastGPT 的数据集
+     */
+    @PostMapping("/delete_me")
+    public Result deleteMe(@RequestHeader("Authorization") String authorization){
+        try {
+            // 解析用户名
+            String token = authorization.startsWith("Bearer ") ? authorization.substring("Bearer ".length()) : authorization;
+            String username = jwtUtil.extractUsername(token);
+            userService.deleteCurrentUser(username);
+            return Result.success("账户及数据集已删除");
+        } catch (Exception e) {
+            return Result.error("删除失败:" + e.getMessage());
+        }
     }
 
     @PostMapping("/forgot_password")

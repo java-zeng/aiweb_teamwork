@@ -70,6 +70,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register").permitAll() // 明确允许注册接口
                         .requestMatchers("/api/auth/sendCode").permitAll() // 明确允许发送验证码接口
                         .requestMatchers("/api/auth/login").permitAll() // 明确允许登录接口
+                        .requestMatchers("/api/v1/collections/**").permitAll()
+                        .requestMatchers("/api/fastgpt/health").permitAll() // 允许FastGPT健康检查
+                        .requestMatchers("/api/user-role-kb/**").authenticated() // 角色知识库API需要认证
+                        .requestMatchers("/api/fastgpt/**").authenticated() // FastGPT API需要认证
                         .anyRequest().authenticated() // 其他所有请求都需要认证
                 )
 

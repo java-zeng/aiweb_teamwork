@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField; // 引入 TableField
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -40,16 +41,24 @@ public class User {
     // 6. 审计与追踪
     // TIMESTAMP NULL DEFAULT NULL 建议使用 LocalDateTime 或 Timestamp
     @TableField("last_login")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime lastLogin; // 新增：对应 last_login 字段
 
     // 7. 时间字段 (MyBatis-Plus 默认开启驼峰映射，无需 @TableField，但写上更清晰)
     @TableField("create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createTime;
 
     @TableField("update_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
     // 8. 软删除字段
     @TableField("delete_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime deleteTime; // 新增：对应 delete_time 字段
+
+    // 9. FastGPT 绑定数据集 ID
+    @TableField("fastgpt_dataset_id")
+    private String fastgptDatasetId;
 }

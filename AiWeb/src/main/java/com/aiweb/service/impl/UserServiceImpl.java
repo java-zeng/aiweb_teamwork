@@ -1,9 +1,6 @@
 package com.aiweb.service.impl;
 
-import com.aiweb.common.Result;
-import com.aiweb.config.AppConfig;
-import com.aiweb.dto.RegisterRequest;
-import com.aiweb.dto.VerificationDto;
+import com.aiweb.dto.request.RegisterRequest;
 import com.aiweb.entity.PasswordReset;
 import com.aiweb.entity.User;
 import com.aiweb.entity.Verification;
@@ -11,31 +8,17 @@ import com.aiweb.mapper.PasswordResetMapper;
 import com.aiweb.mapper.UserMapper;
 import com.aiweb.mapper.VerificationMapper;
 import com.aiweb.service.EmailService;
-import com.aiweb.service.PasswordResetService;
 import com.aiweb.service.UserService;
 import com.aiweb.service.VerificationService;
 import com.aiweb.utils.SmsUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import jdk.jshell.execution.Util;
-import org.apache.ibatis.javassist.LoaderClassPath;
-import org.bouncycastle.crypto.agreement.srp.SRP6Client;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
-import org.springframework.jdbc.support.CustomSQLErrorCodesTranslation;
-import org.springframework.security.access.method.P;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.authentication.AnonymousAuthenticationWebFilter;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.LinkOption;
 import java.time.LocalDateTime;
-
-import java.time.LocalDateTime;
-import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -60,6 +43,7 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private PasswordResetMapper passwordResetMapper;
+
 
 
     public void checkUsernameAndSendCode(String username,String userEmail) throws Exception {
@@ -106,6 +90,19 @@ public class UserServiceImpl implements UserService{
         userMapper.insert(user);
         return user;
     }
+
+    @Override
+    public void deleteCurrentUser(String username) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            throw new RuntimeException("用户不存在:" + username);
+        }
+        // 注意：删除用户时不再删除FastGPT数据集，避免循环依赖
+        // 如果需要删除数据集，请手动处理
+        userMapper.deleteById(user.getId());
+    }
     //TODO 吧查询语句写在一个方法中：用用户名查询，返回查询语句
     @Override
     public void loginUpdateTime(String username) {
@@ -117,6 +114,15 @@ public class UserServiceImpl implements UserService{
             user.setLastLogin(LocalDateTime.now());
             userMapper.updateById(user);
         }
+    }
+    
+    /**
+     * 根据用户名查找用户
+     */
+    public User findByUsername(String username) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        return userMapper.selectOne(queryWrapper);
     }
 
     @Override

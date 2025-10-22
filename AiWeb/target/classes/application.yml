@@ -5,11 +5,11 @@ server:
 spring:
   # 数据库连接池 (DataSource) 配置
   datasource:
-    url: jdbc:mysql://localhost:3306/aiweb
+    url: jdbc:mysql://rm-cn-kf74gq48x00014ao.rwlb.rds.aliyuncs.com:3306/aiweb
     # 数据库用户名 (通常是 root)
-    username: root
+    username: test_admin_aiweb
     # 您的数据库密码 (请替换成您自己的密码)
-    password: Zj17320321853@
+    password: Zj17320321853
     # MySQL 8+ 的驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
@@ -25,6 +25,28 @@ spring:
       mail.smtp.socketFactory.port: 465
       mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
       mail.smtp.socketFactory.fallback: false
+  servlet:
+    multipart:
+      # Spring 文件上传大小限制 (根据您的业务需求调整)
+      max-file-size: 50MB
+      max-request-size: 50MB
+      # 文件上传编码设置，确保正确处理中文字符
+      file-size-threshold: 0
+      location: ${java.io.tmpdir}
+  # 设置默认编码为UTF-8
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  # Jackson配置 - 支持Java 8时间类型序列化
+  jackson:
+    # 启用Java 8时间支持
+    serialization:
+      write-dates-as-timestamps: false
+    # 时间格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 
 #短信模版部分信息
 sendEmail:
@@ -41,12 +63,27 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
 
-#TODO 准备用于短信宝手机短信验证的（）
-smsbao:
-  apiurl: "http://api.smsbao.com/sms"
-  username: "aiweb"
-  password: "Zj123456@"
-  content: "验证码有效期为5分钟，验证码为:"
+fastgpt:
+  api:
+    # 1. FastGPT 服务的根地址 (Base URL)
+    #    - 如果您是在本地 Mac 上通过 Docker 部署的，就使用 http://localhost:3001
+    #    - 如果 FastGPT 部署在云服务器上，请替换为服务器的 IP 地址或域名
+    baseUrl: http://localhost:3001
+
+    # 2. FastGPT 的 API 密钥 (API Key)
+    #    - 请从 FastGPT 界面生成一个新的应用 API Key 并粘贴在这里
+    #    - 注意：是账户密钥
+    key: fastgpt-vu1mzOxQUn2dZ9WoCsxQbWXfsJ5syUoZl8Gaw9NnnBa384dXkAr6hX3zCIwGYSD
+    
+    # 3. FastGPT 应用ID (Application ID)
+    #    - 从您创建的应用配置中获取
+    appId: 68f7a838470e057116ddf733
+    # 数据集相关 API 路径（如与你的 FastGPT 版本不同，可按需调整）
+    dataset:
+      create: /api/core/dataset/create
+      delete: /api/core/dataset/delete
+  app:
+    key: fastgpt-dDera5hMIbKb6P3Ai3UjxWI7vACf91xnRdIJvdhGSQl39mUarpqPYYGyjlLxcbj
 
 
 
