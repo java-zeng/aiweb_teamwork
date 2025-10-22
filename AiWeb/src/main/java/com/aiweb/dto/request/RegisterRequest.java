@@ -1,4 +1,4 @@
-package com.aiweb.dto;
+package com.aiweb.dto.request;
 
 
 import lombok.AllArgsConstructor;
